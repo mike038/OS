@@ -1,3 +1,12 @@
+/** ============================================================================
+ *  Fundamentos de Sistemas Operativos
+ *  Practica 1
+ * 
+ *  Equipo 12
+ *  Diego Orozco Alvarado
+ *  Miguel Alejandro Aguilar Tun
+ *  ============================================================================
+*/ 
 #include <stdio.h>
 #include <math.h>
 #include <sys/time.h>
