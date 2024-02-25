@@ -9,6 +9,7 @@
 */ 
 #include <stdio.h>
 #include <math.h>
+#include <sys/time.h>
 
 int es_primo(int n){
     for (int i = 3; i < n; i+=2) {
@@ -21,9 +22,16 @@ int es_primo(int n){
 
 int main(){
     int rangoSuperior, rangoInferior, currentNumber, numPrimos = 0;
+    struct timeval ts;
+    long long start_ts, stops_ts;
+    
     printf("Rango: ");
     scanf("%d %d", &rangoInferior, &rangoSuperior); 
     int rango = rangoSuperior - rangoInferior;
+
+    gettimeofday(&ts, NULL);
+    start_ts = ts.tv_sec;
+
     for(int i = 0; i <= rango; i++) {
         currentNumber = rangoInferior + i;
 
@@ -40,6 +48,11 @@ int main(){
             numPrimos++;
         }
     }
-    printf("%d primos encontrados entre %d y %d", numPrimos, rangoInferior, rangoSuperior);
+
+    gettimeofday(&ts, NULL);
+    stops_ts = ts.tv_sec;
+
+    printf("%d primos encontrados entre %d y %d\n", numPrimos, rangoInferior, rangoSuperior);
+    printf("%lld segundos\n", (stops_ts - start_ts));
     return 0;
 }
