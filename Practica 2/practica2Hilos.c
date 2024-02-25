@@ -30,11 +30,13 @@ int es_primo(int n){
 
 void proceso_hijo(long intervaloInicio, long intervaloFinal){
     int currentNumber;
-    for(int i = 0; i < intervaloFinal - intervaloInicio; i++) {
+    int numPrimosLocal = 0;
+    for(int i = 0; i <= intervaloFinal - intervaloInicio; i++) {
         currentNumber = intervaloInicio + i;
 
         if(currentNumber == 2){
-            (*g)++;
+            numPrimosLocal++;
+            // printf("%d\n", currentNumber);
             continue;
         }
         
@@ -43,9 +45,12 @@ void proceso_hijo(long intervaloInicio, long intervaloFinal){
         }
 
         if(es_primo(currentNumber)){
-            (*g)++;
+            numPrimosLocal++;
+            // printf("%d\n", currentNumber);
         }
     }
+
+    *g += numPrimosLocal;
     exit(0);
 }
 
@@ -69,9 +74,8 @@ int main(){
     }
 
     g = shmat(shmid, NULL, 0);
-    *g  = 0;
-
-    long intervalo = (rangoSuperior - rangoInferior  + numHilos) / numHilos;
+    *g  = 0;    
+    long intervalo = (rango  + numHilos - 1) / numHilos;
 
     gettimeofday(&ts, NULL);
     start_ts = ts.tv_sec;
@@ -79,6 +83,7 @@ int main(){
     for(int i = 0; i < numHilos; i++) {
         long inicioIntervalo = rangoInferior + i * intervalo;
         long finIntervalo = i == numHilos - 1 ? rangoSuperior : inicioIntervalo + intervalo - 1;
+        // printf("inicio: %ld, fin: %ld\n", inicioIntervalo, finIntervalo);
         int pid = fork();
 
         if(pid < 0){
