@@ -19,6 +19,14 @@
 
 int *g;
 
+/**
+ * Funcion que calcula si un numero es primo a traves
+ * de dividir el numero entre 3 hasta n - 1
+ * @param n -> numero entero
+ * @return 0 -> si el ingresado no es primo
+ *         1 -> si el numero ingresado es primo
+*/
+
 int es_primo(int n){
     for (int i = 3; i < n; i+=2) {
         if(n % i == 0){
@@ -27,6 +35,13 @@ int es_primo(int n){
     }
     return 1;
 }
+
+/**
+ * Proceso que obtiene la cantidad de numeros primos en un intervalo
+ * y al final se le suma a la variable compartida
+ * @param intervaloInicio -> inicio del intervalo a checar
+ * @param intervaloFinal -> fin del intervalo a checar, entra dentro del rango
+*/
 
 void proceso_hijo(long intervaloInicio, long intervaloFinal){
     int currentNumber;
