@@ -52,13 +52,12 @@ void proc(int proc_num) {
 
 void master_proc() {
     int i;
-    sem_post(&start_semaphore); // Signal start
+    sem_wait(&start_semaphore); // Wait for start signal
     for (i = 0; i < NPROCS; i++)
         sem_wait(&proc_semaphore); // Wait for all processes to finish
     *res = 0;
     for (i = 0; i < NPROCS; i++)
         *res += sums[i];
-    exit(0);
 }
 
 int main() {
@@ -71,7 +70,7 @@ int main() {
     int shmid;
     void *shmstart;
 
-    shmid = shmget(0x1234, NPROCS * sizeof(double) + 2 * sizeof(int), 0666 | IPC_CREAT);
+    shmid = shmget(0x8002, NPROCS * sizeof(double) + 2 * sizeof(int), 0666 | IPC_CREAT);
     shmstart = shmat(shmid, NULL, 0);
     sums = shmstart;
 
@@ -93,7 +92,10 @@ int main() {
             proc(i);
     }
 
-    master_proc();
+    master_proc(); // Call master_proc after forking child processes
+
+    // Signal start after master_proc waits
+    sem_post(&start_semaphore);
 
     // Wait for all child processes to finish
     for (int i = 0; i < NPROCS; i++)
