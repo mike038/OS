@@ -1,7 +1,7 @@
 /** ============================================================================
  *  Fundamentos de Sistemas Operativos
  *  Practica 3
- * 
+ *
  *  Equipo 12
  *  Diego Orozco Alvarado
  *  Miguel Alejandro Aguilar Tun
@@ -14,10 +14,8 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <sys/shm.h>
-
 #define NPROCS 4
 #define SERIES_MEMBER_COUNT 200000
-
 double *sums;
 double x = 1.0;
 int *proc_count;
@@ -28,23 +26,22 @@ double get_member(int n, double x) {
     double numerator = 1;
     for (i = 0; i < n; i++)
         numerator = numerator * x;
-    
     if (n % 2 == 0)
         return (-numerator / n);
     else
         return numerator / n;
 }
-
-void proc(int proc_num) {
+void proc(int proc_num)
+{
     int i;
-    while (!(*start_all));
+    while (!(*start_all))
+        ;
     sums[proc_num] = 0;
     for (i = proc_num; i < SERIES_MEMBER_COUNT; i += NPROCS)
         sums[proc_num] += get_member(i + 1, x);
     (*proc_count)++;
     exit(0);
 }
-
 void master_proc() {
     int i;
     sleep(1);
@@ -55,7 +52,6 @@ void master_proc() {
         *res += sums[i];
     exit(0);
 }
-
 int main() {
     int *threadIdPtr;
     long long start_ts;
@@ -67,7 +63,6 @@ int main() {
     int p;
     int shmid;
     void *shmstart;
-
     shmid = shmget(0x1234, NPROCS * sizeof(double) + 2 * sizeof(int), 0666 | IPC_CREAT);
     shmstart = shmat(shmid, NULL, 0);
     sums = shmstart;
@@ -78,7 +73,6 @@ int main() {
     *start_all = 0;
     gettimeofday(&ts, NULL);
     start_ts = ts.tv_sec; // Tiempo inicial
-
     for (i = 0; i < NPROCS; i++) {
         p = fork();
         if (p == 0)
@@ -87,7 +81,6 @@ int main() {
     p = fork();
     if (p == 0)
         master_proc();
-
     printf("El recuento de ln(1 + x) miembros de la serie de Mercator es %d\n",SERIES_MEMBER_COUNT);
     printf("El valor del argumento x es %f\n", (double)x);
     for(int i=0;i<NPROCS+1;i++)
