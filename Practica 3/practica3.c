@@ -52,7 +52,6 @@ void proc(int proc_num) {
 
 void master_proc() {
     int i;
-    sleep(1);
     sem_post(&start_semaphore); // Signal start
     for (i = 0; i < NPROCS; i++)
         sem_wait(&proc_semaphore); // Wait for all processes to finish
@@ -86,7 +85,7 @@ int main() {
     sem_init(&proc_semaphore, 1, 0);  // Initialize semaphore
 
     gettimeofday(&ts, NULL);
-    start_ts = ts.tv_sec; // Tiempo inicial
+    start_ts = ts.tv_sec; // Initial time
 
     for (i = 0; i < NPROCS; i++) {
         p = fork();
@@ -96,12 +95,12 @@ int main() {
 
     master_proc();
 
-    // Parent process waits for all child processes to finish
-    for (int i = 0; i < NPROCS + 1; i++)
+    // Wait for all child processes to finish
+    for (int i = 0; i < NPROCS; i++)
         wait(NULL);
 
     gettimeofday(&ts, NULL);
-    stop_ts = ts.tv_sec; // Tiempo final
+    stop_ts = ts.tv_sec; // Final time
     elapsed_time = stop_ts - start_ts;
 
     printf("El recuento de ln(1 + x) miembros de la serie de Mercator es %d\n", SERIES_MEMBER_COUNT);
