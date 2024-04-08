@@ -18,7 +18,6 @@
 
 #define NPROCS 4
 #define SERIES_MEMBER_COUNT 200000
-#define MSG_TYPE 1
 
 struct msg_buffer {
     long msg_type;
@@ -50,7 +49,7 @@ void proc(int proc_num, int msg_id) {
         sum += get_member(i + 1, x);
     }
 
-    msg.msg_type = MSG_TYPE;
+    msg.msg_type = 1;
     msg.msg_value = sum;
 
     if(msgsnd(msg_id, &msg, sizeof(double), 0) == -1) {
@@ -64,24 +63,24 @@ void proc(int proc_num, int msg_id) {
 double master_proc(int msg_id) {
     struct msg_buffer msg;
     int i;
-    double total_sum = 0;
+    double total = 0;
 
     for(i = 0; i < NPROCS; i++) {
-        if(msgrcv(msg_id, &msg, sizeof(double), MSG_TYPE, 0) == -1) {
+        if(msgrcv(msg_id, &msg, sizeof(double), 1, 0) == -1) {
             perror("msgrcv");
             exit(1);
         }
-        total_sum += msg.msg_value;
+        total += msg.msg_value;
     }
 
-    return total_sum;
+    return total;
 }
 
 int main() {
     struct timeval ts;
     long long start_ts, stop_ts, elapsed_time;
     int i, p, msg_id;
-    double result;
+    double res;
 
     msg_id = msgget(IPC_PRIVATE, 0666 | IPC_CREAT);
     if(msg_id == -1) {
@@ -103,7 +102,7 @@ int main() {
         }
     }
 
-    result = master_proc(msg_id);
+    res = master_proc(msg_id);
     gettimeofday(&ts, NULL);
     stop_ts = ts.tv_sec; // Tiempo final
     elapsed_time = stop_ts - start_ts;
@@ -111,7 +110,7 @@ int main() {
     printf("El recuento de ln(1 + x) miembros de la serie de Mercator es %d\n", SERIES_MEMBER_COUNT);
     printf("El valor del argumento x es %f\n", (double)x);   
     printf("Tiempo = %lld segundos\n", elapsed_time);
-    printf("El resultado es %10.8f\n", result);
+    printf("El resultado es %10.8f\n", res);
     printf("Llamando a la función ln(1 + %f) = %10.8f\n", x, log(1 + x));
     
     msgctl(msg_id, IPC_RMID, NULL);
